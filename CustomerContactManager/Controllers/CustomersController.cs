@@ -111,6 +111,12 @@ namespace CustomerContactManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string id)
         {
+            List<CustomerContact> contactList = await db.CustomerContacts.Where(x => x.CustomerId == id).ToListAsync();
+            foreach (CustomerContact item in contactList)
+            {
+                db.CustomerContacts.Remove(item);
+            }
+
             Customer customer = await db.Customers.FindAsync(id);
             db.Customers.Remove(customer);
             await db.SaveChangesAsync();
@@ -124,6 +130,107 @@ namespace CustomerContactManager.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public ActionResult Contacts(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            List<CustomerContact> contactList = db.CustomerContacts.Where(x => x.CustomerId == id).ToList();
+            if (contactList.Count == 0)
+                contactList.Add(new CustomerContact() { CustomerId = id, Name = "No records" });
+
+            return View(contactList);
+        }
+
+        public ActionResult CreateContact(string id)
+        {
+            CustomerContact contact = new CustomerContact();
+            contact.CustomerId = id;
+            return View(contact);
+        }
+
+        [HttpPost, ActionName("CreateContact")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateContact(CustomerContact contact)
+        {
+            if (ModelState.IsValid)
+            {
+                contact.Id = Guid.NewGuid().ToString();
+                db.CustomerContacts.Add(contact);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Contacts", new { id = contact.CustomerId });
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> DeleteContact(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            CustomerContact contact = await db.CustomerContacts.FindAsync(id);
+            if (contact == null)
+            {
+                return HttpNotFound();
+            }
+            return View(contact);
+        }
+
+        [HttpPost, ActionName("DeleteContact")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteContactConfirmed(string id)
+        {
+            CustomerContact contact = await db.CustomerContacts.FindAsync(id);
+            var customerId = contact.CustomerId;
+            db.CustomerContacts.Remove(contact);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Contacts", new { id = customerId });
+        }
+
+        public async Task<ActionResult> EditContact(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            CustomerContact contact = await db.CustomerContacts.FindAsync(id);
+            if (contact == null)
+            {
+                return HttpNotFound();
+            }
+            return View(contact);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditContact([Bind(Include = "Id,Email,ContactNumber,Name,CustomerId")] CustomerContact contact)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(contact).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Contacts", new { id = contact.CustomerId });
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> ContactDetails(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            CustomerContact contact = await db.CustomerContacts.FindAsync(id);
+            if (contact == null)
+            {
+                return HttpNotFound();
+            }
+            return View(contact);
         }
     }
 }

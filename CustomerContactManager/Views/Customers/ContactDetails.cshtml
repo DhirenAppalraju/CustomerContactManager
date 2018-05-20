@@ -1,0 +1,52 @@
+﻿@model CustomerContactManager.Models.CustomerContact
+
+@{
+    ViewBag.Title = "ContactDetails";
+}
+
+<h2>ContactDetails</h2>
+
+<div>
+    <h4>CustomerContact</h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ContactNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ContactNumber)
+        </dd>
+
+        @*<dt>
+            @Html.DisplayNameFor(model => model.CustomerId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CustomerId)
+        </dd>*@
+
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "EditContact", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Contacts", new { id = Model.CustomerId })
+</p>
