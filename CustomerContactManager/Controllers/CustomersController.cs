@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
@@ -15,19 +16,19 @@ namespace CustomerContactManager.Controllers
         private CustomerContext db = new CustomerContext();
 
         // GET: Customers
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View(db.Customers.ToList());
+            return View(await db.Customers.ToListAsync());
         }
 
         // GET: Customers/Details/5
-        public ActionResult Details(string id)
+        public async Task<ActionResult> Details(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = await db.Customers.FindAsync(id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -46,12 +47,13 @@ namespace CustomerContactManager.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Latitude,Longitude,Name")] Customer customer)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Latitude,Longitude,Name")] Customer customer)
         {
             if (ModelState.IsValid)
             {
+                customer.Id = Guid.NewGuid().ToString();
                 db.Customers.Add(customer);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -59,13 +61,13 @@ namespace CustomerContactManager.Controllers
         }
 
         // GET: Customers/Edit/5
-        public ActionResult Edit(string id)
+        public async Task<ActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = await db.Customers.FindAsync(id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -78,25 +80,25 @@ namespace CustomerContactManager.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Latitude,Longitude,Name")] Customer customer)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Latitude,Longitude,Name")] Customer customer)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(customer).State = EntityState.Modified;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(customer);
         }
 
         // GET: Customers/Delete/5
-        public ActionResult Delete(string id)
+        public async Task<ActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = await db.Customers.FindAsync(id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -107,11 +109,11 @@ namespace CustomerContactManager.Controllers
         // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public async Task<ActionResult> DeleteConfirmed(string id)
         {
-            Customer customer = db.Customers.Find(id);
+            Customer customer = await db.Customers.FindAsync(id);
             db.Customers.Remove(customer);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
