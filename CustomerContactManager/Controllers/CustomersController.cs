@@ -47,9 +47,13 @@ namespace CustomerContactManager.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Latitude,Longitude,Name")] Customer customer)
+        public async Task<ActionResult> Create(string Latitude, string Longitude, string Name)//([Bind(Include = "Id,Latitude,Longitude,Name")] Customer customer)
         {
-            if (ModelState.IsValid)
+            Customer customer = new Customer();
+            customer.Latitude = Latitude;
+            customer.Longitude = Longitude;
+            customer.Name = Name;
+            if (!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude) && !string.IsNullOrEmpty(Name))
             {
                 customer.Id = Guid.NewGuid().ToString();
                 db.Customers.Add(customer);
@@ -80,9 +84,14 @@ namespace CustomerContactManager.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Latitude,Longitude,Name")] Customer customer)
+        public async Task<ActionResult> Edit(string Latitude, string Longitude, string Name, string Id)//([Bind(Include = "Id,Latitude,Longitude,Name")] Customer customer)
         {
-            if (ModelState.IsValid)
+            Customer customer = new Customer();
+            customer.Latitude = Latitude;
+            customer.Longitude = Longitude;
+            customer.Name = Name;
+            customer.Id = Id;
+            if (!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude) && !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Id))
             {
                 db.Entry(customer).State = EntityState.Modified;
                 await db.SaveChangesAsync();
@@ -154,9 +163,14 @@ namespace CustomerContactManager.Controllers
 
         [HttpPost, ActionName("CreateContact")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateContact(CustomerContact contact)
+        public async Task<ActionResult> CreateContact(string Email, string CustomerId, string Name, string ContactNumber)//(CustomerContact contact)
         {
-            if (ModelState.IsValid)
+            CustomerContact contact = new CustomerContact();
+            contact.Email = Email;
+            contact.CustomerId = CustomerId;
+            contact.Name = Name;
+            contact.ContactNumber = ContactNumber;
+            if (!string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(CustomerId) && !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(ContactNumber))
             {
                 contact.Id = Guid.NewGuid().ToString();
                 db.CustomerContacts.Add(contact);
@@ -208,9 +222,15 @@ namespace CustomerContactManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditContact([Bind(Include = "Id,Email,ContactNumber,Name,CustomerId")] CustomerContact contact)
+        public async Task<ActionResult> EditContact(string Email, string CustomerId, string Name, string ContactNumber, string Id)//([Bind(Include = "Id,Email,ContactNumber,Name,CustomerId")] CustomerContact contact)
         {
-            if (ModelState.IsValid)
+            CustomerContact contact = new CustomerContact();
+            contact.Email = Email;
+            contact.CustomerId = CustomerId;
+            contact.Name = Name;
+            contact.ContactNumber = ContactNumber;
+            contact.Id = Id;
+            if (!string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(CustomerId) && !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(ContactNumber) && !string.IsNullOrEmpty(Id))
             {
                 db.Entry(contact).State = EntityState.Modified;
                 await db.SaveChangesAsync();
